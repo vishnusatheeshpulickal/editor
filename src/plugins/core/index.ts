@@ -47,7 +47,15 @@ import { SharedHistoryPlugin } from './SharedHistoryPlugin'
 import { noop } from '../../utils/fp'
 import { controlOrMeta } from '../../utils/detectMac'
 import { MdastBreakVisitor } from './MdastBreakVisitor'
+<<<<<<< HEAD
 import { type IconKey } from './Icon'
+=======
+import { mdxJsxFromMarkdown, mdxJsxToMarkdown } from 'mdast-util-mdx-jsx'
+import { mdxJsx } from 'micromark-extension-mdx-jsx'
+import { MdastHTMLVisitor } from './MdastHTMLVisitor'
+import { GenericHTMLNode } from './GenericHTMLNode'
+import { LexicalGenericHTMLVisitor } from './LexicalGenericHTMLNodeVisitor'
+>>>>>>> 14bdb51 (wip: parse all html tags)
 
 /** @internal */
 export type EditorSubscription = (activeEditor: LexicalEditor) => () => void
@@ -547,6 +555,11 @@ export const [
     realm.pubKey('initialMarkdown', params.initialMarkdown.trim())
     realm.pubKey('iconComponentFor', params.iconComponentFor)
 
+    // Use the JSX extension to parse HTML
+    realm.pubKey('addMdastExtension', mdxJsxFromMarkdown())
+    realm.pubKey('addSyntaxExtension', mdxJsx())
+    realm.pubKey('addToMarkdownExtension', mdxJsxToMarkdown())
+
     // core import visitors
     realm.pubKey('addImportVisitor', MdastRootVisitor)
     realm.pubKey('addImportVisitor', MdastParagraphVisitor)
@@ -554,16 +567,20 @@ export const [
     realm.pubKey('addImportVisitor', MdastFormattingVisitor)
     realm.pubKey('addImportVisitor', MdastInlineCodeVisitor)
     realm.pubKey('addImportVisitor', MdastBreakVisitor)
+    realm.pubKey('addImportVisitor', MdastHTMLVisitor)
 
     // basic lexical nodes
     realm.pubKey('addLexicalNode', ParagraphNode)
     realm.pubKey('addLexicalNode', TextNode)
+    realm.pubKey('addLexicalNode', GenericHTMLNode)
 
     // core export visitors
     realm.pubKey('addExportVisitor', LexicalRootVisitor)
     realm.pubKey('addExportVisitor', LexicalParagraphVisitor)
     realm.pubKey('addExportVisitor', LexicalTextVisitor)
     realm.pubKey('addExportVisitor', LexicalLinebreakVisitor)
+    realm.pubKey('addExportVisitor', LexicalGenericHTMLVisitor)
+
     realm.pubKey('addComposerChild', SharedHistoryPlugin)
   }
 })
