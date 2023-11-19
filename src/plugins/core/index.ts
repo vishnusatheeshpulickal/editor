@@ -47,15 +47,12 @@ import { SharedHistoryPlugin } from './SharedHistoryPlugin'
 import { noop } from '../../utils/fp'
 import { controlOrMeta } from '../../utils/detectMac'
 import { MdastBreakVisitor } from './MdastBreakVisitor'
-<<<<<<< HEAD
 import { type IconKey } from './Icon'
-=======
 import { mdxJsxFromMarkdown, mdxJsxToMarkdown } from 'mdast-util-mdx-jsx'
 import { mdxJsx } from 'micromark-extension-mdx-jsx'
 import { MdastHTMLVisitor } from './MdastHTMLVisitor'
 import { GenericHTMLNode } from './GenericHTMLNode'
 import { LexicalGenericHTMLVisitor } from './LexicalGenericHTMLNodeVisitor'
->>>>>>> 14bdb51 (wip: parse all html tags)
 
 /** @internal */
 export type EditorSubscription = (activeEditor: LexicalEditor) => () => void

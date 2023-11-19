@@ -1,16 +1,13 @@
-import type { MdxJsxAttribute, MdxJsxTextElement } from 'mdast-util-mdx'
+import type { MdxJsxAttribute } from 'mdast-util-mdx'
 import { MdastImportVisitor } from '../../importMarkdownToLexical'
-import { $createGenericHTMLNode, KnownHTMLTagType, MDX_NODE_TYPES, htmlTags } from './GenericHTMLNode'
+import { $createGenericHTMLNode } from './GenericHTMLNode'
+import { isMdastHTMLNode, MdastHTMLNode } from './MdastHTMLNode'
 
-export const MdastHTMLVisitor: MdastImportVisitor<MdxJsxTextElement> = {
+export const MdastHTMLVisitor: MdastImportVisitor<MdastHTMLNode> = {
   testNode: (node) => {
-    return (
-      MDX_NODE_TYPES.includes(node.type) && (htmlTags as readonly string[]).includes((node as MdxJsxTextElement).name?.toLowerCase() ?? '')
-    )
+    return isMdastHTMLNode(node)
   },
   visitNode: function ({ mdastNode, actions }): void {
-    actions.addAndStepInto(
-      $createGenericHTMLNode(mdastNode.name as KnownHTMLTagType, mdastNode.type, mdastNode.attributes as MdxJsxAttribute[])
-    )
+    actions.addAndStepInto($createGenericHTMLNode(mdastNode.name, mdastNode.type, mdastNode.attributes as MdxJsxAttribute[]))
   }
 }
