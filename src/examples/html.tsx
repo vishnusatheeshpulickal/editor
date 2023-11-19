@@ -1,6 +1,8 @@
 import React from 'react'
 import { DiffSourceToggleWrapper, MDXEditor, corePluginHooks, diffSourcePlugin, headingsPlugin, toolbarPlugin } from '../'
 import { $patchStyleText } from '@lexical/selection'
+import { $getRoot, $isTextNode, ElementNode, LexicalNode } from 'lexical'
+import { $isGenericHTMLNode } from '@/plugins/core/GenericHTMLNode'
 
 const markdownWithSpan = `
   # Hello World
@@ -34,6 +36,7 @@ export function SpanWithColor() {
 
 const HTMLToolbarComponent = () => {
   const [currentSelection, activeEditor] = corePluginHooks.useEmitterValues('currentSelection', 'activeEditor')
+  const [currentStyle, setCurrentStyle] = React.useState('')
   const onClick = () => {
     if (activeEditor !== null && currentSelection !== null) {
       activeEditor.update(() => {
@@ -42,9 +45,25 @@ const HTMLToolbarComponent = () => {
     }
   }
 
-  activeEditor?.getEditorState().read(() => {
-    console.log(currentSelection?.getNodes())
-  })
+  React.useEffect(() => {
+    activeEditor?.getEditorState().read(() => {
+      const selectedNodes = currentSelection?.getNodes() || []
+      if (selectedNodes.length === 1) {
+        let node: ElementNode | LexicalNode | null | undefined = selectedNodes[0]
+        let style = ''
+        while (!style && node && node !== $getRoot()) {
+          if ($isTextNode(node) || $isGenericHTMLNode(node)) {
+            style = node.getStyle()
+          }
+
+          node = node?.getParent()
+        }
+        setCurrentStyle(style)
+      } else {
+        setCurrentStyle('')
+      }
+    })
+  }, [currentSelection, activeEditor])
 
   return (
     <>
@@ -60,6 +79,7 @@ const HTMLToolbarComponent = () => {
       >
         Big font size
       </button>
+      {currentStyle && <div>Current style: {currentStyle}</div>}
     </>
   )
 }

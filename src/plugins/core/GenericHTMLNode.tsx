@@ -63,6 +63,10 @@ export class GenericHTMLNode extends ElementNode {
     return this.__attributes
   }
 
+  getStyle(): string {
+    return this.__attributes.find((attribute) => attribute.name === 'style')?.value as string
+  }
+
   // View
 
   createDOM(): HTMLElement {
